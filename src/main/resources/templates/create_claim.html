@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script src="/js/scripts.js" th:src="@{/js/scripts.js}"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Claim</title>
+</head>
+<body>
+<header>
+    <header th:replace="fragments/navbar :: navbar"></header>
+    <h1>Create a New Claim</h1>
+</header>
+<main>
+    <!-- Claim Submission Form -->
+    <form id="createClaimForm">
+        <label for="userId">User ID:</label>
+        <input type="text" id="userId" name="userId" required>
+
+        <label for="userName">Name:</label>
+        <input type="text" id="userName" name="userName" required>
+
+        <label for="userEmail">Email:</label>
+        <input type="email" id="userEmail" name="userEmail" required>
+
+        <label for="userPhone">Phone:</label>
+        <input type="text" id="userPhone" name="userPhone" required>
+
+        <label for="description">Claim Description:</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <button type="submit">Submit</button>
+    </form>
+</main>
+<footer>
+    <p>&copy; 2024 Claims Management System</p>
+</footer>
+</body>
+</html>
+
+
+

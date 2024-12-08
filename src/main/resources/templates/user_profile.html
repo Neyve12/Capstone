@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script src="/js/scripts.js" th:src="@{/js/scripts.js}"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+<body>
+<header>
+    <header th:replace="fragments/navbar :: navbar"></header>
+    <h1>User Profile</h1>
+</header>
+<main>
+    <p><strong>Name:</strong> <span th:text="${name}">Default Name</span></p>
+    <p><strong>Email:</strong> <span th:text="${email}">Default Email</span></p>
+</main>
+<footer>
+    <p>&copy; 2024 Claims Management System</p>
+</footer>
+</body>
+</html>

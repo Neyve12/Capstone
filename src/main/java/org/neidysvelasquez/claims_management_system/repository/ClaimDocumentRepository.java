@@ -18,14 +18,6 @@ public interface ClaimDocumentRepository extends JpaRepository<ClaimDocument, Lo
     List<ClaimDocument> findAllByClaim_Id(Long claimId);
 
     /**
-     * Find all documents of a specific file type.
-     *
-     * @param fileType the type of file (e.g., "pdf", "image/jpeg")
-     * @return a list of documents with the specified file type
-     */
-    List<ClaimDocument> findAllByFileType(String fileType);
-
-    /**
      * Find a document by its file name.
      *
      * @param fileName the name of the file

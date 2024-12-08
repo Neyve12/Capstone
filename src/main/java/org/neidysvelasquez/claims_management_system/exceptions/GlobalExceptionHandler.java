@@ -14,7 +14,7 @@ import java.util.Map;
  * Handles exceptions across the entire application and returns appropriate responses.
  */
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class  GlobalExceptionHandler {
 
     /**
      * Handles validation errors triggered by invalid method arguments.
@@ -43,4 +43,5 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleAllExceptions(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + ex.getMessage());
     }
+
 }

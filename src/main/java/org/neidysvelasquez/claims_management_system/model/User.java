@@ -1,4 +1,5 @@
 package org.neidysvelasquez.claims_management_system.model;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -44,6 +45,7 @@ public class User {
      * Cascade operations ensure claims are managed automatically with user actions.
      */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true) // One user has many claims
+    @JsonManagedReference
     private List<Claims> claims;
 }
 
