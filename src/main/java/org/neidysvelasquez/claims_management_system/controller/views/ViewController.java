@@ -7,9 +7,10 @@ import org.neidysvelasquez.claims_management_system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -43,8 +44,17 @@ public class ViewController {
      * @return the name of the create claim view template.
      */
     @GetMapping("/create-claim")
-    public String createClaimForm() {
+    public String createClaimForm(Model model) {
+        model.addAttribute("claim", new Claims());
         return "create_claim"; // Maps to create_claim.html
+    }
+
+
+    @PostMapping("create-claim")
+    public String createClaim(@ModelAttribute("claim") Claims claims, RedirectAttributes redirectAttributes) {
+        claimsService.createClaim(claims);
+        redirectAttributes.addFlashAttribute("message", "Claim created successfully!");
+        return "redirect:/home";
     }
 
     /**
@@ -102,4 +112,10 @@ public class ViewController {
         return "user_profile"; // Maps to user_profile.html
     }
 
-}
+        @GetMapping("/update/{id}")
+        public String showUpdateForm(@PathVariable Long id, Model model) {
+        Claims claim = claimsService.getClaimById(id);
+        model.addAttribute("claim", claim);
+        return "update_claim"; // Points to the Thymeleaf template
+    }
+    }

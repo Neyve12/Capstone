@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
 <div th:fragment="navbar">
     <nav class="navbar">
@@ -10,16 +10,16 @@
                 <!-- Home Page -->
                 <li><a href="/" th:href="@{/}">Home</a></li>
 
-                <!-- View Claims Page -->
-                <li><a href="/view-claims" th:href="@{/view-claims}">View Claims</a></li>
-
                 <!-- Create Claim Page -->
                 <li><a href="/create-claim" th:href="@{/create-claim}">Create Claim</a></li>
 
-                <!-- Claim Details Page (For Testing, you might remove or adjust it later) -->
-                <li><a href="/claim/2" th:href="@{/claim/2}">Claim Details</a></li>
+                <!-- View Claims Page -->
+                <li><a href="/view-claims" th:href="@{/view-claims}">View Claims</a></li>
 
-                <!-- Upload Document Page -->
+                <!-- Update Claim Page -->
+                <li><a href="/update-claims/2" th:href="@{/update-claims/2}">Update Claims</a></li>
+
+                <!-- Upload document Page -->
                 <li><a href="/upload-document" th:href="@{/upload-document}">Upload Document</a></li>
 
                 <!-- User Profile Page -->
@@ -27,5 +27,6 @@
             </ul>
         </div>
     </nav>
+</div>
 </body>
 </html>

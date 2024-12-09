@@ -1,13 +1,20 @@
 package org.neidysvelasquez.claims_management_system.service;
 
+import org.neidysvelasquez.claims_management_system.ClaimRequestDTO;
+import org.neidysvelasquez.claims_management_system.model.ClaimDocument;
 import org.neidysvelasquez.claims_management_system.model.Claims;
+import org.neidysvelasquez.claims_management_system.model.User;
 import org.neidysvelasquez.claims_management_system.repository.ClaimsRepository;
 import org.neidysvelasquez.claims_management_system.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 
@@ -33,15 +40,40 @@ public class ClaimsService {
     public Claims createClaim(Claims claim) {
         logger.info("Attempting to create a new claim");
 
-        if (claim.getUser() == null || claim.getUser().getId() == null) {
+        //Validate userId is present
+       if (claim.getUser() == null || claim.getUser().getId() == null) {
             throw new IllegalArgumentException("User is required for creating a claim.");
         }
+       // Fetch the User object using userId
+        Long userId = claim.getUser().getId();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User with ID " + userId + " not found."));
 
-        userRepository.findById(claim.getUser().getId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found."));
+       //Associate the User with Claim
+        claim.setUser(user);
 
+        //Save the claim
         Claims savedClaim = claimsRepository.save(claim);
         logger.info("Claim created successfully with ID: {}", savedClaim.getId());
+        return savedClaim;
+
+        }
+    public Claims createClaim(ClaimRequestDTO dto) {
+        logger.info("Attempting to create a new claim");
+
+        // Fetch the User object using userId
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User with ID " + dto.getUserId() + " not found."));
+
+        // Create a new Claims object
+        Claims claim = new Claims();
+        claim.setUser(user);
+        claim.setDescription(dto.getDescription());
+        claim.setStatus(dto.getStatus());
+
+        // Save the claim
+        Claims savedClaim = claimsRepository.save(claim);
+        logger.info("Claim created successfully {}", savedClaim.getId());
         return savedClaim;
     }
 
@@ -63,9 +95,8 @@ public class ClaimsService {
      * @return the claim if found
      */
     public Claims getClaimById(Long id) {
-        logger.info("Attempting to fetch claim with ID: {}", id);
         return claimsRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Claim with ID " + id + " not found."));
+                .orElseThrow(() -> new IllegalArgumentException("Claim not found."));
     }
     public List<Claims> getClaimsByUserId(Long userId) {
         return claimsRepository.findByUserId(userId);

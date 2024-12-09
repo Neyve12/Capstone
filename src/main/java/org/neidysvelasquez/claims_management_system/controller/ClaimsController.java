@@ -1,19 +1,22 @@
 package org.neidysvelasquez.claims_management_system.controller;
 
 import jakarta.validation.Valid;
+import org.neidysvelasquez.claims_management_system.ClaimRequestDTO;
 import org.neidysvelasquez.claims_management_system.model.Claims;
 import org.neidysvelasquez.claims_management_system.service.ClaimsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * REST controller for managing Claims entities.
- * Provides endpoints for creating, retrieving, updating, and deleting claims.
+ * Provides endpoints for creating, retrieving, updating, deleting claims, and uploading documents.
  */
 @RestController
 @RequestMapping("/api/claims")
@@ -33,15 +36,14 @@ public class ClaimsController {
     /**
      * Creates a new claim.
      *
-     * @param claim the claim to be created
      * @return a ResponseEntity containing the created Claims entity
      */
     @PostMapping(
             consumes = {MediaType.APPLICATION_JSON_VALUE, "application/json;charset=UTF-8"},
             produces = {MediaType.APPLICATION_JSON_VALUE, "application/json;charset=UTF-8"}
     )
-    public ResponseEntity<Claims> createClaim(@Valid @RequestBody Claims claim) {
-        Claims createdClaim = claimsService.createClaim(claim);
+    public ResponseEntity<Claims> createClaim(@RequestBody ClaimRequestDTO dto) {
+        Claims createdClaim = claimsService.createClaim(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdClaim);
     }
 
@@ -76,8 +78,8 @@ public class ClaimsController {
      */
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Claims> getClaimById(@PathVariable Long id) {
-        Optional<Claims> claimOptional = Optional.ofNullable(claimsService.getClaimById(id));
-        return claimOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Claims claim = claimsService.getClaimById(id);
+        return ResponseEntity.ok(claim);
     }
 
     /**
@@ -99,17 +101,7 @@ public class ClaimsController {
     }
 
 
-    /**
-     * Deletes a claim by its ID.
-     *
-     * @param id the ID of the claim to be deleted
-     * @return a ResponseEntity with HTTP status 204 (No Content)
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteClaim(@PathVariable Long id) {
-        claimsService.deleteClaim(id);
-        return ResponseEntity.noContent().build();
-    }
-}
+        }
+
 
 

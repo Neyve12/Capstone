@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Claim</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header th:replace="fragments/navbar :: navbar"></header>
+
+<main>
+  <h1>Update Claim</h1>
+  <form th:action="@{/api/claims/{id}(id=${claim.id})}" method="post">
+    <!-- Simulate PUT Method -->
+    <input type="hidden" name="_method" value="PUT" />
+
+    <!-- Description Field -->
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description" th:value="${claim.description}" required>
+
+    <!-- Status Field -->
+    <label for="status">Status:</label>
+    <select id="status" name="status" th:value="${claim.status}">
+      <option value="Pending" th:selected="${claim.status == 'Pending'}">Pending</option>
+      <option value="Resolved" th:selected="${claim.status == 'Resolved'}">Resolved</option>
+    </select>
+
+    <button type="submit">Update Claim</button>
+  </form>
+</main>
+
+<footer>
+  <p>&copy; 2024 Claims Management System</p>
+</footer>
+</body>
+</html>
