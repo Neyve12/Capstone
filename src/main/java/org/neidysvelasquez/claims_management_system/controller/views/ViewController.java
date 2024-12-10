@@ -42,8 +42,7 @@ public class ViewController {
      * Create Claim Page
      *
      * @return the name of the create claim view template.
-     */
-    @GetMapping("/create-claim")
+     */ @GetMapping("/create-claim")
     public String createClaimForm(Model model) {
         model.addAttribute("claim", new Claims());
         return "create_claim"; // Maps to create_claim.html

@@ -11,16 +11,150 @@
 
 <main>
     <section>
-        <p>Welcome to the Claims Management System. Manage your claims efficiently.</p>
-        <a href="/api/claims/user/2" class="styled-link">View My Claims</a><!-- Static user ID -->
-    </section>
+        <h1>Welcome to the Claims Management System</h1>
+        <h2>Claims</h2>
 
+        <!-- Claims Table -->
+        <table id="claimsTable" border="1">
+            <thead>
+            <tr>
+                <th>Date Created</th>
+                <th>Claim ID</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Table content will be dynamically populated with JavaScript -->
+            </tbody>
+        </table>
+
+        <!-- Modal for Editing Claims -->
+        <div id="editModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h2>Edit Claim</h2>
+                <form id="editClaimForm">
+                    <label for="editDescription">Description:</label>
+                    <input type="text" id="editDescription" name="description" required />
+
+                    <label for="editStatus">Status:</label>
+                    <select id="editStatus" name="status">
+                        <option value="Pending">Pending</option>
+                        <option value="Resolved">Resolved</option>
+                    </select>
+
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="closeEditModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </section>
 </main>
 
 <footer>
     <p>&copy; 2024 Claims Management System</p>
 </footer>
 
-<script src="/js/scripts.js" th:src="@{/js/scripts.js}"></script>
+<script>
+    // Fetch and Populate Claims Table
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const response = await fetch('/api/claims'); // Adjust API URL as needed
+            if (!response.ok) throw new Error('Failed to fetch claims');
+            const claims = await response.json();
+
+            const tableBody = document.querySelector('#claimsTable tbody');
+            tableBody.innerHTML = '';
+            claims.forEach(claim => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${new Date(claim.createdAt).toLocaleString()}</td>
+                    <td>${claim.id}</td>
+                    <td>${claim.description}</td>
+                    <td>${claim.status || 'N/A'}</td>
+                    <td>
+                        <button onclick="openEditModal(${claim.id})">Update</button>
+                        <button onclick="deleteClaim(${claim.id})">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error fetching claims:', error);
+        }
+    });
+
+    // Open Edit Modal
+    function openEditModal(claimId) {
+        const modal = document.getElementById('editModal');
+        modal.style.display = 'block';
+
+        fetch(/api/claims/${claimId})
+    .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch claim');
+            return response.json();
+        })
+            .then(claim => {
+                document.getElementById('editDescription').value = claim.description;
+                document.getElementById('editStatus').value = claim.status;
+                document.getElementById('editClaimForm').onsubmit = function (event) {
+                    event.preventDefault();
+                    updateClaim(claimId);
+                };
+            })
+            .catch(error => console.error('Error fetching claim data:', error));
+    }
+
+    // Close Edit Modal
+    function closeEditModal() {
+        const modal = document.getElementById('editModal');
+        modal.style.display = 'none';
+    }
+
+    // Update Claim
+    async function updateClaim(claimId) {
+        const description = document.getElementById('editDescription').value;
+        const status = document.getElementById('editStatus').value;
+
+        try {
+            const response = await fetch(/api/claims/${claimId}, {
+                method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description, status }),
+            });
+
+            if (response.ok) {
+                alert('Claim updated successfully!');
+                closeEditModal();
+                location.reload();
+            } else {
+                alert('Failed to update claim');
+            }
+        } catch (error) {
+            console.error('Error updating claim:', error);
+        }
+    }
+
+    // Delete Claim
+    async function deleteClaim(claimId) {
+        if (confirm('Are you sure you want to delete this claim?')) {
+            try {
+                const response = await fetch(/api/claims/${claimId}, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    alert('Claim deleted successfully!');
+                    location.reload();
+                } else {
+                    alert('Failed to delete claim');
+                }
+            } catch (error) {
+                console.error('Error deleting claim:', error);
+            }
+        }
+    }
+</script>
 </body>
 </html>

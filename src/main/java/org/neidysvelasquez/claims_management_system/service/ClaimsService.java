@@ -1,7 +1,6 @@
 package org.neidysvelasquez.claims_management_system.service;
 
 import org.neidysvelasquez.claims_management_system.ClaimRequestDTO;
-import org.neidysvelasquez.claims_management_system.model.ClaimDocument;
 import org.neidysvelasquez.claims_management_system.model.Claims;
 import org.neidysvelasquez.claims_management_system.model.User;
 import org.neidysvelasquez.claims_management_system.repository.ClaimsRepository;
@@ -10,11 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 
@@ -97,38 +92,46 @@ public class ClaimsService {
     public Claims getClaimById(Long id) {
         return claimsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Claim not found."));
+    }/**
+     * Get a claim by user ID.
+     *
+     * @param userId the ID of the user
+     * @return the claim if found
+     */public List<Claims> getClaimsByUserId(Long userId) {
+        List<Claims> claims = claimsRepository.findByUserId(userId);
+        logger.info("Fetched {} claims for user ID {}", claims.size(), userId);
+        return claims;
     }
-    public List<Claims> getClaimsByUserId(Long userId) {
-        return claimsRepository.findByUserId(userId);
-    }
-
 
     /**
      * Update a claim.
      *
-     * @param claim the updated claim object
+     * @param id
+     * @param updatedClaim the updated claim object
      * @return the updated claim
      */
     @Transactional
-    public Claims updateClaim(Claims claim) {
-        logger.info("Attempting to update claim with ID: {}", claim.getId());
+    public Claims updateClaim(Long id, Claims updatedClaim) {
+        logger.info("Attempting to update claim");
 
-        Claims existingClaim = claimsRepository.findById(claim.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Claim with ID " + claim.getId() + " does not exist."));
+        Claims existingClaim = claimsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Claim not found"));
 
-        if (claim.getUser() == null || !userRepository.existsById(claim.getUser().getId())) {
-            throw new IllegalArgumentException("Associated user does not exist.");
+        // Update fields only if they are provided
+        if (updatedClaim.getDescription() != null) {
+            existingClaim.setDescription(updatedClaim.getDescription());
+        }
+        if (updatedClaim.getStatus() != null) {
+            existingClaim.setStatus(updatedClaim.getStatus());
         }
 
-        // Update fields
-        existingClaim.setDescription(claim.getDescription());
-        existingClaim.getClaimDocuments().clear();
-        claim.getClaimDocuments().forEach(existingClaim::addClaimDocument);
 
-        Claims updatedClaim = claimsRepository.save(existingClaim);
-        logger.info("Claim with ID {} updated successfully.", updatedClaim.getId());
-        return updatedClaim;
+        // Update fields
+        existingClaim.setDescription(updatedClaim.getDescription());
+        existingClaim.setStatus(updatedClaim.getStatus());
+        return claimsRepository.save(existingClaim);
     }
+
 
     /**
      * Deletes a claim by its ID.
@@ -145,4 +148,5 @@ public class ClaimsService {
         claimsRepository.deleteById(id);
         logger.info("Claim with ID {} deleted successfully.", id);
     }
+
 }

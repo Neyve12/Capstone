@@ -4,13 +4,12 @@ import jakarta.validation.Valid;
 import org.neidysvelasquez.claims_management_system.ClaimRequestDTO;
 import org.neidysvelasquez.claims_management_system.model.Claims;
 import org.neidysvelasquez.claims_management_system.service.ClaimsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/claims")
 public class ClaimsController {
-
+    @Autowired
     private final ClaimsService claimsService;
 
     /**
@@ -96,12 +95,13 @@ public class ClaimsController {
     )
     public ResponseEntity<Claims> updateClaim(@PathVariable Long id, @RequestBody Claims updatedClaim) {
         updatedClaim.setId(id); // Ensure the ID is set
-        Claims claim = claimsService.updateClaim(updatedClaim);
+        Claims claim = claimsService.updateClaim(id, updatedClaim);//This calls the service layer to update the claim
         return ResponseEntity.ok(claim);
     }
 
-
+        @DeleteMapping("/{id}")
+        public ResponseEntity<String> deleteClaim(@PathVariable Long id) {
+            claimsService.deleteClaim(id); //This calls the service layer to handle the deletion
+            return ResponseEntity.ok("Claim deleted successfully!");
         }
-
-
-
+    }

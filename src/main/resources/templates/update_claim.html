@@ -11,21 +11,26 @@
 
 <main>
   <h1>Update Claim</h1>
-  <form th:action="@{/api/claims/{id}(id=${claim.id})}" method="post">
-    <!-- Simulate PUT Method -->
-    <input type="hidden" name="_method" value="PUT" />
 
-    <!-- Description Field -->
+  <!-- Formulario para actualizar el reclamo -->
+
+  <form th:action="@{/api/claims/{id}(id=${claim.id})}" method="post">
+    <!-- Simula el método PUT -->
+    <input type="hidden" name="_method" value="PUT">
+
+
+    <!-- Campo para la descripción -->
     <label for="description">Description:</label>
     <input type="text" id="description" name="description" th:value="${claim.description}" required>
 
-    <!-- Status Field -->
+    <!-- Campo para el estado -->
     <label for="status">Status:</label>
-    <select id="status" name="status" th:value="${claim.status}">
+    <select id="status" name="status" required>
       <option value="Pending" th:selected="${claim.status == 'Pending'}">Pending</option>
       <option value="Resolved" th:selected="${claim.status == 'Resolved'}">Resolved</option>
     </select>
 
+    <!-- Botón para enviar -->
     <button type="submit">Update Claim</button>
   </form>
 </main>
@@ -33,5 +38,21 @@
 <footer>
   <p>&copy; 2024 Claims Management System</p>
 </footer>
+
+<script>
+  // JavaScript básico para validación o notificaciones
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
+
+    form.addEventListener('submit', (event) => {
+      const description = document.getElementById('description').value.trim();
+      if (!description) {
+        event.preventDefault();
+        alert('Description is required!');
+      }
+    });
+  });
+</script>
+
 </body>
 </html>
